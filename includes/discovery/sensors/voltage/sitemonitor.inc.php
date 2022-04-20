@@ -22,22 +22,47 @@
  * @copyright  2017 Neil Lathwood
  * @author     Neil Lathwood <gh+n@laf.io>
  */
+$index = 0;
+
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
-discover_sensor($valid['sensor'], 'voltage', $device, $oid, 1, 'sitemonitor', 'Shunt Input', 10, 1, null, null, null, null, $current);
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', 'Shunt Input', 10, 1, null, null, null, null, $current);
+
+$index++;
 
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.2';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
-discover_sensor($valid['sensor'], 'voltage', $device, $oid, 2, 'sitemonitor', 'Power 1', 10, 1, null, null, null, null, $current);
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', 'Power 1', 10, 1, null, null, null, null, $current);
+
+$index++;
 
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.3';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
-discover_sensor($valid['sensor'], 'voltage', $device, $oid, 3, 'sitemonitor', 'Power 2', 10, 1, null, null, null, null, $current);
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', 'Power 2', 10, 1, null, null, null, null, $current);
 
+$index++;
 /**
  * This section of code was added by Stream IT Networks
  * to add support for the functionality of the Packetflux
  * Sitemonitor Expansion modules\
  */
 
+$expansion_module_oid = '.1.3.6.1.4.1.32050.2.1.25.2.1';
+$expansion_module = snmp_get($device, $expansion_module_oid, "-Oqv");
 
+if ($expansion_module == "TriStarMPPTChargeModeRevH"){
+  for ($x = 0; $x <=32; $x++){
+    $oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
+    $oid++;
+    $current = (snmp_get($device, $oid, '-Oqv') /10);
+    $desc_oid = '.1.3.6.1.4.1.32050.2.1.27.2.6';
+    $desc_oid++;
+    $desc = snmp_get($device, $desc_oid, '-Oqv');
+    $index_oid = '.1.3.6.1.4.1.32050.2.1.27.1.6';
+    $index_oid++;
+    $index = snmp_get($device, $index_oid, '-Oqv');
+
+    discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+
+  }
+}
