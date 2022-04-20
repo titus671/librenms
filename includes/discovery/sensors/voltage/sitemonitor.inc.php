@@ -46,19 +46,19 @@ $index++;
  * to add support for the functionality of the Packetflux
  * Sitemonitor Expansion modules\
  */
+$oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
+$desc_oid = '.1.3.6.1.4.1.32050.2.1.27.2.6';
+$index_oid = '.1.3.6.1.4.1.32050.2.1.27.1.6';
 
 $expansion_module_oid = '.1.3.6.1.4.1.32050.2.1.25.2.1';
 $expansion_module = snmp_get($device, $expansion_module_oid, "-Oqv");
 
 if ($expansion_module == "TriStarMPPTChargeModeRevH"){
   for ($x = 0; $x <=32; $x++){
-    $oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
     $oid++;
     $current = (snmp_get($device, $oid, '-Oqv') /10);
-    $desc_oid = '.1.3.6.1.4.1.32050.2.1.27.2.6';
     $desc_oid++;
     $desc = snmp_get($device, $desc_oid, '-Oqv');
-    $index_oid = '.1.3.6.1.4.1.32050.2.1.27.1.6';
     $index_oid++;
     $index = snmp_get($device, $index_oid, '-Oqv');
 
