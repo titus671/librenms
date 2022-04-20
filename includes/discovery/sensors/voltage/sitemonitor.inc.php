@@ -72,8 +72,8 @@ if ($expansion_module == "TriStarMPPTChargeModeRevH"){
       $desc = snmp_get($device, $desc_oid, '-Oqv');
       $index_oid++;
       $index = snmp_get($device, $index_oid, '-Oqv');
-
-      discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+      $validity = 0
+      discover_sensor($validity['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
     }
   }
 }
