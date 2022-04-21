@@ -46,7 +46,7 @@ $index++;
  * to add support for the functionality of the Packetflux
  * Sitemonitor Expansion modules\
  *
-$oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
+*$oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
 $desc_oid = '.1.3.6.1.4.1.32050.2.1.27.2.6';
 $index_oid = '.1.3.6.1.4.1.32050.2.1.27.1.6';
 
@@ -153,7 +153,23 @@ switch ($expansion_module) {
 
   case "6Voltmeter":
 
-    // TODO
+   $sensors = (object) [
+
+     "0" => ["temperature", 10],
+     "1" => ["current", 10],
+     "2" => ["voltage", 10],
+     "3" => ["voltage", 10],
+     "4" => ["current", 10],
+     "5" => ["temperature", 10],
+     "6" => ["temperature", 10],
+     "7" => ["voltage", 10],
+     "8" => ["voltage", 10],
+     "9" => ["voltage", 10],
+     "10" => ["voltage", 10],
+     "11" => ["current", 10],
+     "12" => ["current", 10],
+   ];
+
+    //TODO
     break;
 }
-
