@@ -45,8 +45,8 @@ $index++;
  * This section of code was added by Stream IT Networks
  * to add support for the functionality of the Packetflux
  * Sitemonitor Expansion modules\
- *
-*$oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
+* *
+$oid = '.1.3.6.1.4.1.32050.2.1.27.5.6';
 $desc_oid = '.1.3.6.1.4.1.32050.2.1.27.2.6';
 $index_oid = '.1.3.6.1.4.1.32050.2.1.27.1.6';
 
@@ -63,7 +63,7 @@ if ($expansion_module == "TriStarMPPTChargeModeRevH"){
     $index = snmp_get($device, $index_oid, '-Oqv');
 
     discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
-
+}
   }elseif ($expansion_module == '6Voltmeter'){
     for ($x = 0; $x <=6; $x++){
       $oid++;
@@ -72,11 +72,11 @@ if ($expansion_module == "TriStarMPPTChargeModeRevH"){
       $desc = snmp_get($device, $desc_oid, '-Oqv');
       $index_oid++;
       $index = snmp_get($device, $index_oid, '-Oqv');
-      $validity = '0'
+      $validity = '0';
       discover_sensor($validity['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
     }
   }
-}
+
 */
 
 $expansion_module = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.25.2.1', "-Oqv");
@@ -170,6 +170,23 @@ switch ($expansion_module) {
      "12" => ["current", 10],
    ];
 
-    //TODO
+   $base_oid = "'.1.3.6.1.4.1.32050.2.1.27.";
+   $idx_index = "1";
+   $desc_index = "2";
+   $value_index = "5";
+
+   // hard coded to 38 sensors that are common with the TriStar MPPT
+   for ($idx=0;$idx<13;$idx++) {
+
+     $index = snmp_get($device, $base_oid.$idx_index.$idx, "-0qv");
+     $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-0qv");
+     $value = snmp_get($device, $base_oid.$value_index.$idx, "-0qv");
+
+     discover_sensor($valid['sensor'], $sensors->$index[0], $device,
+       $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+       $sensors->$index[1], 1, null, null, null, null, $value);
+   }
+
+
     break;
 }
