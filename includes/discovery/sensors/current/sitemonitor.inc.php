@@ -24,6 +24,46 @@
  */
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.4';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
-if ($current > 0) {
-    discover_sensor($valid['sensor'], 'current', $device, $oid, 0, 'sitemonitor', 'Current', 10, 1, null, null, null, null, $current);
-}
+$desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.4', '-Oqv'));
+discover_sensor($valid['sensor'], 'current', $device, $oid, 0, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+
+
+switch ($expansion_module) {
+
+  // Run discovery of Tri Star MPPT Charge Controller
+  case "TriStarMPPTChargeModeRevH":
+
+    $sensors = (object) [
+
+      // divisor mapping
+      "11" => 100,
+      "12" => 100,
+      "17" => 100
+    ];
+
+    $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
+    $idx_index = "1.";
+    $desc_index = "2.";
+    $value_index = "5.";
+
+    // $idx will be the sensor index on the Packetflux
+    foreach ($sensors as $idx => $arr) {
+
+      $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
+      $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
+      $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
+
+      $value = $value / $sensors->$idx;
+
+      discover_sensor($valid['sensor'], 'current', $device,
+        $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+        $sensors->$idx, 1, null, null, null, null, $value);
+
+    }
+
+    break;
+
+  default:
+
+
+  }

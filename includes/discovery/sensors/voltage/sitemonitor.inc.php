@@ -127,7 +127,7 @@ switch ($expansion_module) {
       $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
       $sensors->$idx, 1, null, null, null, null, $value);
 
-  }
+    }
     break;
 
   default:
