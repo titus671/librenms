@@ -28,6 +28,10 @@ $desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.4', '-Oqv'));
 discover_sensor($valid['sensor'], 'current', $device, $oid, 0, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
 
 
+
+// Get the expansion unit description, if it exists, if not TODO
+$expansion_module = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.25.2.1', "-Oqv");
+
 switch ($expansion_module) {
 
   // Run discovery of Tri Star MPPT Charge Controller
