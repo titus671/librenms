@@ -27,6 +27,11 @@ $current = (snmp_get($device, $oid, '-Oqv') / 10);
 $desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.4', '-Oqv'));
 discover_sensor($valid['sensor'], 'current', $device, $oid, 0, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
 
+$oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
+$current = (snmp_get($device, $oid, '-Oqv') / 10);
+$desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.1', '-Oqv'));
+discover_sensor($valid['sensor'], 'current', $device, $oid, 0, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+
 
 
 // Get the expansion unit description, if it exists, if not TODO
@@ -40,7 +45,6 @@ switch ($expansion_module) {
     $sensors = (object) [
 
       // divisor mapping
-      "1" => 10,
       "11" => 100,
       "12" => 100,
       "17" => 100
