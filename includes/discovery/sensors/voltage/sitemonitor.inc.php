@@ -85,6 +85,8 @@ switch ($expansion_module) {
       $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
       $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
 
+      $value = $value / $sensors->$idx;
+
       discover_sensor($valid['sensor'], 'voltage', $device,
         $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
         $sensors->$idx, 1, null, null, null, null, $value);
@@ -118,6 +120,8 @@ switch ($expansion_module) {
     $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
     $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
     $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
+
+    $value = $value / $sensors->$idx;
 
     discover_sensor($valid['sensor'], 'voltage', $device,
       $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
