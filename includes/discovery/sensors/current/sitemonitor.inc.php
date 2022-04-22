@@ -21,6 +21,9 @@
  *
  * @copyright  2017 Neil Lathwood
  * @author     Neil Lathwood <gh+n@laf.io>
+ * @author     Trendal Toews @ Stream IT Networks
+ *                4-22-2022
+ *                Expansion Modules support and other minor adjustments
  */
 
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
