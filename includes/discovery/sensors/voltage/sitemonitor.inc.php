@@ -22,8 +22,29 @@
  * @copyright  2017 Neil Lathwood
  * @author     Neil Lathwood <gh+n@laf.io>
  *
- * original code is moved to the default case switch
  */
+
+ /**
+ * While this first index value is read as a voltage, it ultimately is measuring a current flow
+ * Therefore I feel like it should be handled in ..current/sitemonitor.inc.php
+ */
+
+/*$oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
+$current = (snmp_get($device, $oid, '-Oqv') / 10);
+$desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.1', '-Oqv'));
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, 1, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+*/
+
+$oid = '.1.3.6.1.4.1.32050.2.1.27.5.2';
+$current = (snmp_get($device, $oid, '-Oqv') / 10);
+$desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.2', '-Oqv'));
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, 2, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+
+$oid = '.1.3.6.1.4.1.32050.2.1.27.5.3';
+$current = (snmp_get($device, $oid, '-Oqv') / 10);
+$desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.3', '-Oqv'));
+discover_sensor($valid['sensor'], 'voltage', $device, $oid, 3, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
+
 
 
 // Get the expansion unit description, if it exists, if not TODO
@@ -81,17 +102,5 @@ switch ($expansion_module) {
 
   default:
 
-    // this is the original code from Neil Lathwood
 
-    $oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
-    $current = (snmp_get($device, $oid, '-Oqv') / 10);
-    discover_sensor($valid['sensor'], 'voltage', $device, $oid, 1, 'sitemonitor', 'Shunt Input', 10, 1, null, null, null, null, $current);
-
-    $oid = '.1.3.6.1.4.1.32050.2.1.27.5.2';
-    $current = (snmp_get($device, $oid, '-Oqv') / 10);
-    discover_sensor($valid['sensor'], 'voltage', $device, $oid, 2, 'sitemonitor', 'Power 1', 10, 1, null, null, null, null, $current);
-
-    $oid = '.1.3.6.1.4.1.32050.2.1.27.5.3';
-    $current = (snmp_get($device, $oid, '-Oqv') / 10);
-    discover_sensor($valid['sensor'], 'voltage', $device, $oid, 3, 'sitemonitor', 'Power 2', 10, 1, null, null, null, null, $current);
   }
