@@ -63,9 +63,9 @@ switch ($expansion_module) {
     // $idx will be the sensor index on the Packetflux
     foreach ($sensors as $idx => $arr) {
 
-      $index = snmp_get($device, $base_oid.$idx_index.$idx, "-0qv");
-      $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-0qv");
-      $value = snmp_get($device, $base_oid.$value_index.$idx, "-0qv");
+      $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
+      $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
+      $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
 
       discover_sensor($valid['sensor'], 'voltage', $device,
         $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
