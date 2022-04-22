@@ -40,6 +40,7 @@ switch ($expansion_module) {
     $sensors = (object) [
 
       // divisor mapping
+      "1" => 10,
       "11" => 100,
       "12" => 100,
       "17" => 100
