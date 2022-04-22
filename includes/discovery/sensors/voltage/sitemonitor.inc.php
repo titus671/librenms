@@ -22,7 +22,7 @@
  * @copyright  2017 Neil Lathwood
  * @author     Neil Lathwood <gh+n@laf.io>
  */
-$index = 0;
+/*$index = 0;
 
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.1';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
@@ -40,7 +40,7 @@ $oid = '.1.3.6.1.4.1.32050.2.1.27.5.3';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
 discover_sensor($valid['sensor'], 'voltage', $device, $oid, $index, 'sitemonitor', 'Power 2', 10, 1, null, null, null, null, $current);
 
-$index++;
+$index++;*/
 /**
  * This section of code was added by Stream IT Networks
  * to add support for the functionality of the Packetflux
@@ -91,54 +91,42 @@ switch ($expansion_module) {
     //
     $sensors = (object) [
 
-      "0" => ["temperature", 10],
-      "1" => ["current", 10],
       "2" => ["voltage", 10],
       "3" => ["voltage", 10],
-      "4" => ["current", 10],
-      "5" => ["temperature", 10],
-      "6" => ["temperature", 10],
       "7" => ["voltage", 100],
       "8" => ["voltage", 100],
       "9" => ["voltage", 100],
       "10" => ["voltage", 100],
-      "11" => ["current", 100],
-      "12" => ["current", 100],
-      "13" => ["temperature", 1],
-      "14" => ["temperature", 1],
-      "15" => ["temperature", 1],
       "16" => ["voltage", 100],
-      "17" => ["current", 100],
-      "18" => ["count", 1],
-      "19" => ["count", 1],
-      "20" => ["count", 1],
-      "21" => ["count", 1],
       "22" => ["voltage", 100],
-      "23" => ["current", 10],
-      "24" => ["current", 10],
-      "25" => ["power_consumed", 1],
-      "26" => ["power_consumed", 1],
-      "27" => ["power", 100],
-      "28" => ["power", 100],
-      "29" => ["power", 100],
       "30" => ["voltage", 100],
       "31" => ["voltage", 100],
       "32" => ["voltage", 100],
       "33" => ["voltage", 100],
       "34" => ["voltage", 100],
-      "35" => ["count", 1],
-      "36" => ["count", 1],
       "37" => ["voltage", 100],
       "38" => ["voltage", 100]
     ];
 
-    $base_oid = "'.1.3.6.1.4.1.32050.2.1.27.";
-    $idx_index = "1";
-    $desc_index = "2";
-    $value_index = "5";
+    $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
+    $idx_index = "1.";
+    $desc_index = "2.";
+    $value_index = "5.";
 
-    // hard coded to 38 sensors that are common with the TriStar MPPT
-    for ($idx=0;$idx<39;$idx++) {
+    // $idx will be the sensor index on the Packetflux
+    foreach ($sensors as $idx => $arr) {
+
+      $index = snmp_get($device, $base_oid.$idx_index.$idx, "-0qv");
+      $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-0qv");
+      $value = snmp_get($device, $base_oid.$value_index.$idx, "-0qv");
+
+      discover_sensor($valid['sensor'], 'voltage', $device,
+        $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+        $sensors->$idx[1], 1, null, null, null, null, $value);
+
+    }
+
+/*    for ($idx=0;$idx<0;$idx++) {
 
       $index = snmp_get($device, $base_oid.$idx_index.$idx, "-0qv");
       $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-0qv");
@@ -148,10 +136,10 @@ switch ($expansion_module) {
         $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
         $sensors->$index[1], 1, null, null, null, null, $value);
     }
-
+*/
     break;
 
-  case "6Voltmeter":
+/*  case "6Voltmeter":
 
    $sensors = (object) [
 
@@ -170,10 +158,10 @@ switch ($expansion_module) {
      "12" => ["current", 10],
    ];
 
-   $base_oid = "'.1.3.6.1.4.1.32050.2.1.27.";
-   $idx_index = "1";
-   $desc_index = "2";
-   $value_index = "5";
+   $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
+   $idx_index = "1.";
+   $desc_index = "2.";
+   $value_index = "5.";
 
    // hard coded to 38 sensors that are common with the TriStar MPPT
    for ($idx=0;$idx<13;$idx++) {
@@ -185,7 +173,7 @@ switch ($expansion_module) {
      discover_sensor($valid['sensor'], $sensors->$index[0], $device,
        $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
        $sensors->$index[1], 1, null, null, null, null, $value);
-   }
+   }*/
 
 
     break;
