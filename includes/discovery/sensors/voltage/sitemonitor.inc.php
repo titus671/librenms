@@ -69,7 +69,7 @@ switch ($expansion_module) {
 
       discover_sensor($valid['sensor'], 'voltage', $device,
         $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
-        $sensors->$idx[1], 1, null, null, null, null, $value);
+        $sensors->$idx, 1, null, null, null, null, $value);
 
     }
 
