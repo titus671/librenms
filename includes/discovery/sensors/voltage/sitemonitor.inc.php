@@ -55,12 +55,9 @@ switch ($expansion_module) {
   // Run discovery of Tri Star MPPT Charge Controller
   case "TriStarMPPTChargeModeRevH":
 
-
     $sensors = (object) [
 
       // divisor mapping
-      "2" => 10,
-      "3" => 10,
       "7" => 100,
       "8" => 100,
       "9" => 100,
@@ -98,6 +95,35 @@ switch ($expansion_module) {
 
   case "6Voltmeter":
 
+  // Run discovery of the 6 Port Volt Monitoring module
+  $sensors = (object) [
+
+    // divisor mapping
+    "7" => 10,
+    "8" => 10,
+    "9" => 10,
+    "10" => 10,
+    "11" => 10,
+    "12" => 10
+  ];
+
+  $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
+  $idx_index = "1.";
+  $desc_index = "2.";
+  $value_index = "5.";
+
+  // $idx will be the sensor index on the Packetflux
+  foreach ($sensors as $idx => $arr) {
+
+    $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
+    $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
+    $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
+
+    discover_sensor($valid['sensor'], 'voltage', $device,
+      $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+      $sensors->$idx, 1, null, null, null, null, $value);
+
+  }
     break;
 
   default:
