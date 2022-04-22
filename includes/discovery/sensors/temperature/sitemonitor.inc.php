@@ -74,7 +74,7 @@ switch ($expansion_module) {
 
       $value = $value / $sensors->$idx;
 
-      discover_sensor($valid['sensor'], 'voltage', $device,
+      discover_sensor($valid['sensor'], 'temperature', $device,
         $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
         $sensors->$idx, 1, null, null, null, null, $value);
 
