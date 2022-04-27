@@ -24,7 +24,6 @@
  * @author     Trendal Toews @ Stream IT Networks
  *                4-22-2022
  *                Expansion Modules support and other minor adjustments
- *
  */
 
 // Shunt Input code moved to the current/sitemonitor.inc.php module
@@ -39,92 +38,85 @@ $current = (snmp_get($device, $oid, '-Oqv') / 10);
 $desc = (snmp_get($device, '.1.3.6.1.4.1.32050.2.1.27.2.3', '-Oqv'));
 discover_sensor($valid['sensor'], 'voltage', $device, $oid, 3, 'sitemonitor', $desc, 10, 1, null, null, null, null, $current);
 
-
-
 // Get the expansion unit description, if it exists, if not TODO
-$expansion_module = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.25.2.1', "-Oqv");
+$expansion_module = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.25.2.1', '-Oqv');
 
 switch ($expansion_module) {
 
   // Run discovery of Tri Star MPPT Charge Controller
-  case "TriStarMPPTChargeModeRevH":
+  case 'TriStarMPPTChargeModeRevH':
 
     $sensors = (object) [
 
       // divisor mapping
-      "7" => 100,
-      "8" => 100,
-      "9" => 100,
-      "10" => 100,
-      "16" => 100,
-      "22" => 100,
-      "30" => 100,
-      "31" => 100,
-      "32" => 100,
-      "33" => 100,
-      "34" => 100,
-      "37" => 100,
-      "38" => 100
+      '7' => 100,
+      '8' => 100,
+      '9' => 100,
+      '10' => 100,
+      '16' => 100,
+      '22' => 100,
+      '30' => 100,
+      '31' => 100,
+      '32' => 100,
+      '33' => 100,
+      '34' => 100,
+      '37' => 100,
+      '38' => 100,
     ];
 
-    $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
-    $idx_index = "1.";
-    $desc_index = "2.";
-    $value_index = "5.";
+    $base_oid = '.1.3.6.1.4.1.32050.2.1.27.';
+    $idx_index = '1.';
+    $desc_index = '2.';
+    $value_index = '5.';
 
     // $idx will be the sensor index on the Packetflux
     foreach ($sensors as $idx => $arr) {
+        $index = snmp_get($device, $base_oid . $idx_index . $idx, '-Oqv');
+        $desc = snmp_get($device, $base_oid . $desc_index . $idx, '-Oqv');
+        $value = snmp_get($device, $base_oid . $value_index . $idx, '-Oqv');
 
-      $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
-      $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
-      $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
+        $value = $value / $sensors->$idx;
 
-      $value = $value / $sensors->$idx;
-
-      discover_sensor($valid['sensor'], 'voltage', $device,
-        $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+        discover_sensor($valid['sensor'], 'voltage', $device,
+        $base_oid . $value_index . $idx, $idx, 'sitemonitor', $desc,
         $sensors->$idx, 1, null, null, null, null, $value);
-
     }
 
     break;
 
-  case "6Voltmeter":
+  case '6Voltmeter':
 
   // Run discovery of the 6 Port Volt Monitoring module
   $sensors = (object) [
 
     // divisor mapping
-    "7" => 10,
-    "8" => 10,
-    "9" => 10,
-    "10" => 10,
-    "11" => 10,
-    "12" => 10
+    '7' => 10,
+    '8' => 10,
+    '9' => 10,
+    '10' => 10,
+    '11' => 10,
+    '12' => 10,
   ];
 
-  $base_oid = ".1.3.6.1.4.1.32050.2.1.27.";
-  $idx_index = "1.";
-  $desc_index = "2.";
-  $value_index = "5.";
+  $base_oid = '.1.3.6.1.4.1.32050.2.1.27.';
+  $idx_index = '1.';
+  $desc_index = '2.';
+  $value_index = '5.';
 
   // $idx will be the sensor index on the Packetflux
   foreach ($sensors as $idx => $arr) {
+      $index = snmp_get($device, $base_oid . $idx_index . $idx, '-Oqv');
+      $desc = snmp_get($device, $base_oid . $desc_index . $idx, '-Oqv');
+      $value = snmp_get($device, $base_oid . $value_index . $idx, '-Oqv');
 
-    $index = snmp_get($device, $base_oid.$idx_index.$idx, "-Oqv");
-    $desc = snmp_get($device, $base_oid.$desc_index.$idx, "-Oqv");
-    $value = snmp_get($device, $base_oid.$value_index.$idx, "-Oqv");
+      $value = $value / $sensors->$idx;
 
-    $value = $value / $sensors->$idx;
-
-    discover_sensor($valid['sensor'], 'voltage', $device,
-      $base_oid.$value_index.$idx, $idx, 'sitemonitor', $desc,
+      discover_sensor($valid['sensor'], 'voltage', $device,
+      $base_oid . $value_index . $idx, $idx, 'sitemonitor', $desc,
       $sensors->$idx, 1, null, null, null, null, $value);
-
-    }
+  }
     break;
 
   default:
-
 
   }
