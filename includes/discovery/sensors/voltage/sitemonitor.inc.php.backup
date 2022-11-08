@@ -33,11 +33,3 @@ discover_sensor($valid['sensor'], 'voltage', $device, $oid, 2, 'sitemonitor', 'P
 $oid = '.1.3.6.1.4.1.32050.2.1.27.5.3';
 $current = (snmp_get($device, $oid, '-Oqv') / 10);
 discover_sensor($valid['sensor'], 'voltage', $device, $oid, 3, 'sitemonitor', 'Power 2', 10, 1, null, null, null, null, $current);
-
-/**
- * This section of code was added by Stream IT Networks
- * to add support for the functionality of the Packetflux
- * Sitemonitor Expansion modules\
- */
-
-
