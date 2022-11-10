@@ -21,10 +21,6 @@
  *
  * @copyright  2020 Josh Baird
  * @author     Josh Baird <joshbaird@gmail.com>
- *
- * @author     Trendal Toews <trendal.toews@streamitnet.com>
- *              11-08-2022
- *              Adding support for Morningstar charge state
  */
 $switch = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.26.5.3', '-Ovqe');
 
@@ -55,32 +51,4 @@ if ($switch) {
     );
 
     create_sensor_to_state_index($device, $state_name, $sensor_index);
-}
-
-/*
-*
-*   Morningstar charge controller support
-*
-*/
-$vendor_value = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.28.5.0', '-Oqv');
-
-if (str_contains('Morningstar')) {
-
-  $product_value = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.28.5.1', '-Oqv');
-
-  switch ($product_value) {
-
-    case 'PS-PWM-15':
-
-      $charge_state = snmp_get($device, '.1.3.6.1.4.1.32050.2.1.28.5.3', '-Oqv');
-
-      discover_sensor($valid['sensor'], 'state', $device,
-      '.1.3.6.1.4.1.32050.2.1.28.5.3', 3, 'sitemonitor', "Charge State",
-      3, 1, null, null, null, $charge_state);
-
-    break;
-
-    default:
-
-    }
 }
