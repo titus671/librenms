@@ -87,7 +87,7 @@ DB_PASSWORD="DBPASS"
 
 Config option: `active_directory`
 
-Install __php_ldap__  or __php7.0-ldap__, making sure to install the
+Install __php-ldap__  or __php8.1-ldap__, making sure to install the
 same version as PHP.
 
 If you have issues with secure LDAP try setting
@@ -160,6 +160,13 @@ This yields `(&(objectclass=user)(sAMAccountName=$username))` for the
 user filter and `(&(objectclass=group)(sAMAccountName=$group))` for
 the group filter.
 
+### SELinux configuration
+
+On RHEL / CentOS / Fedora, in order for LibreNMS to reach Active Directory, you need to allow LDAP requests in SELinux:
+```
+setsebool -P httpd_can_connect_ldap 1
+```
+
 ## LDAP Authentication
 
 Config option: `ldap`
@@ -188,7 +195,11 @@ $config['auth_ldap_starttls'] = True;               // Enable TLS on port 389
 $config['auth_ldap_prefix'] = 'uid=';               // prepended to usernames
 $config['auth_ldap_group']  = 'cn=groupname,ou=groups,dc=example,dc=com'; // generic group with level 0
 $config['auth_ldap_groupmemberattr'] = 'memberUid'; // attribute to use to see if a user is a member of a group
+$config['auth_ldap_groupmembertype'] = 'username';  // username type to find group members by, either username (default), fulldn or puredn
 $config['auth_ldap_uid_attribute'] = 'uidnumber';   // attribute for unique id
+$config['auth_ldap_timeout'] = 5;                   // time to wait before giving up (or trying the next server)
+$config['auth_ldap_emailattr'] = 'mail';            // attribute for email address
+$config['auth_ldap_attr.uid'] = 'uid';              // attribute to check username against
 $config['auth_ldap_debug'] = false;                 // enable for verbose debug messages
 $config['auth_ldap_userdn'] = true;                 // Uses a users full DN as the value of the member attribute in a group instead of member: username. (it’s member: uid=username,ou=groups,dc=domain,dc=com)
 $config['auth_ldap_userlist_filter'] = 'service=informatique'; // Replace 'service=informatique' by your ldap filter to limit the number of responses if you have an ldap directory with thousand of users
@@ -246,12 +257,33 @@ $config['auth_ldap_groups'] = [
 ];
 ```
 
+### SELinux configuration
+
+On RHEL / CentOS / Fedora, in order for LibreNMS to reach LDAP, you need to allow LDAP requests in SELinux:
+```
+setsebool -P httpd_can_connect_ldap 1
+```
+
 ## Radius Authentication
 
 Please note that a mysql user is created for each user the logs in
-successfully. User level 1 is assigned to those accounts so you will
-then need to assign the relevant permissions unless you set
-`$config['radius']['userlevel']` to be something other than 1.
+successfully. User level 1 is assigned by default to those accounts 
+unless radius sends a reply attribute with the correct userlevel. 
+
+You can change the default userlevel by setting
+`$config['radius']['userlevel']` to something other than 1.
+
+The attribute `Filter-ID` is a standard Radius-Reply-Attribute (string) that
+can be assigned a value which translates into a userlevel in LibreNMS. 
+
+The strings to send in `Filter-ID` reply attribute is *one* of the following:
+
+- `librenms_role_normal` - Sets the value `1`, which is the normal user level.
+- `librenms_role_admin` - Sets the value `5`, which is the administrator level.
+- `librenms_role_global-read` - Sets the value `10`, which is the global read level.
+
+LibreNMS will ignore any other strings sent in `Filter-ID` and revert to default userlevel that is set in `config.php`.
+
 
 ```php
 $config['radius']['hostname']      = 'localhost';
@@ -261,6 +293,11 @@ $config['radius']['timeout']       = 3;
 $config['radius']['users_purge']   = 14;  // Purge users who haven't logged in for 14 days.
 $config['radius']['default_level'] = 1;  // Set the default user level when automatically creating a user.
 ```
+
+### Radius Huntgroup
+
+Freeradius has a function called `Radius Huntgroup` which allows to send different attributes based on NAS.
+This may be utilized if you already use `Filter-ID` in your environment and also want to use radius with LibreNMS.
 
 ### Old account cleanup
 
@@ -335,13 +372,49 @@ will use LDAP to determine and assign the userlevel of a user. The
 userlevel will be calculated by using LDAP group membership
 information as the ___ldap___ module does.
 
-The configuration is the same as for the ___ldap___ module with one extra option: auth_ldap_cache_ttl.
+The configuration is similar to the ___ldap___ module with one extra option: auth_ldap_cache_ttl.
 This option allows to control how long user information (user_exists, userid, userlevel) are cached within the PHP Session.
 The default value is 300 seconds.
 To disabled this caching (highly discourage) set this option to 0.
 
+#### Standard config
+
 ```php
+$config['auth_mechanism'] = 'ldap-authorization';
+$config['auth_ldap_server'] = 'ldap.example.com';               // Set server(s), space separated. Prefix with ldaps:// for ssl
+$config['auth_ldap_suffix'] = ',ou=People,dc=example,dc=com';   // appended to usernames
+$config['auth_ldap_groupbase'] = 'ou=groups,dc=example,dc=com'; // all groups must be inside this
+$config['auth_ldap_groups']['admin']['level'] = 10;             // set admin group to admin level
+$config['auth_ldap_groups']['pfy']['level'] = 5;                // set pfy group to global read only level
+$config['auth_ldap_groups']['support']['level'] = 1;            // set support group as a normal user
+```
+
+#### Additional options (usually not needed)
+
+```php
+$config['auth_ldap_version'] = 3; # v2 or v3
+$config['auth_ldap_port'] = 389;                    // 389 or 636 for ssl
+$config['auth_ldap_starttls'] = True;               // Enable TLS on port 389
+$config['auth_ldap_prefix'] = 'uid=';               // prepended to usernames
+$config['auth_ldap_group']  = 'cn=groupname,ou=groups,dc=example,dc=com'; // generic group with level 0
+$config['auth_ldap_groupmemberattr'] = 'memberUid'; // attribute to use to see if a user is a member of a group
+$config['auth_ldap_groupmembertype'] = 'username';  // username type to find group members by, either username (default), fulldn or puredn
+$config['auth_ldap_emailattr'] = 'mail';            // attribute for email address
+$config['auth_ldap_attr.uid'] = 'uid';              // attribute to check username against
+$config['auth_ldap_userlist_filter'] = 'service=informatique'; // Replace 'service=informatique' by your ldap filter to limit the number of responses if you have an ldap directory with thousand of users
 $config['auth_ldap_cache_ttl'] = 300;
+```
+
+#### LDAP bind user (optional)
+
+If your ldap server does not allow anonymous bind, it is highly
+suggested to create a bind user, otherwise "remember me", alerting
+users, and the API will not work.
+
+```php
+$config['auth_ldap_binduser'] = 'ldapbind'; // will use auth_ldap_prefix and auth_ldap_suffix
+#$config['auth_ldap_binddn'] = 'CN=John.Smith,CN=Users,DC=MyDomain,DC=com'; // overrides binduser
+$config['auth_ldap_bindpassword'] = 'password';
 ```
 
 ## View/embedded graphs without being logged into LibreNMS
