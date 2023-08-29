@@ -35,11 +35,11 @@ use LibreNMS\Util\Proxy;
 class Discord extends Transport
 {
     public const ALERT_FIELDS_TO_DISCORD_FIELDS = [
-        'timestamp' => 'Timestamp',
-        'severity' => 'Severity',
-        'hostname' => 'Hostname',
-        'name' => 'Rule Name',
-        'rule' => 'Rule',
+#        'timestamp' => 'Timestamp',
+#        'severity' => 'Severity',
+#        'hostname' => 'Hostname',
+#        'name' => 'Rule Name',
+#        'rule' => 'Rule',
     ];
 
     public function deliverAlert($obj, $opts)
